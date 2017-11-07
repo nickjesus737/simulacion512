@@ -8,12 +8,12 @@ public class Simulacion {
     Cola cola2;
 
     int tiempoSimulacion; //horas
-    int hora; //minutos
     int numeroCorridas;
 
     int posicionNumeroAleatorio;
-    double tiempoTotalCola1;
-    double tiempoTotalCola2;
+
+    int numeroMayorCola1;
+    int numeroMayorCola2;
 
     double mediaPoisson;
     double mediaExponencial;
@@ -28,13 +28,12 @@ public class Simulacion {
         this.cola1 = new Cola();
         this.cola2 = new Cola();
 
-        this.hora = 60;
         this.tiempoSimulacion = tiempoSimulacion * 60;
         this.numeroCorridas = numeroCorridas;
-
         this.posicionNumeroAleatorio = 0;
-        this.tiempoTotalCola1 = 0;
-        this.tiempoTotalCola2 = 0;
+
+        this.numeroMayorCola1 = 0;
+        this.numeroMayorCola2 = 0;
 
         this.mediaPoisson = mediaPoisson;
         this.mediaExponencial = mediaExponencial;
@@ -47,33 +46,44 @@ public class Simulacion {
 
     }
 
-    //metodo para obtener el numero de clientes que llegan a la cola 1 siguiendo la distribuacion de poisson y 
-    //asignarle a cada cliente un numero aleatorio con el tiempo de servicio que tendra siguiendo la distribucion exponencial
-    public void asignaClientesEnCola1() {
+    //metodo para obtener el numero de clientes que llegan a la cola 1 siguiendo la distribuacion de poisson
+    public int numeroClientesEnCola1() {
 
-        Integer numeroClientesCola1 = this.metodos.variableAleatoriaPoisson(this.listaPoisson, numerosAleatorios.get(this.posicionNumeroAleatorio));
+        int numeroClientesCola1 = this.metodos.variableAleatoriaPoisson(this.listaPoisson, numerosAleatorios.get(this.posicionNumeroAleatorio));
+        this.posicionNumeroAleatorio++;
 
-        System.out.println(numeroClientesCola1);
+        return numeroClientesCola1;
+    }
+
+    //Metodo para asignarle a cada cliente un numero aleatorio con el tiempo de servicio que tendra siguiendo la distribucion exponencial
+    public void agregaClientesEnCola1() {
 
         Double tiempoEnColaCliente = 0.0;
 
+        tiempoEnColaCliente = this.metodos.variableAleatoriaExponencial(this.mediaExponencial, this.numerosAleatorios.get(this.posicionNumeroAleatorio));
+
+        Cliente a = new Cliente(tiempoEnColaCliente, tiempoEnColaCliente);
+
+        this.cola1.clientesEnCola.add(a);
+
         this.posicionNumeroAleatorio++;
 
-        for (int i = 0; i < numeroClientesCola1; i++) {
-
-            tiempoEnColaCliente = this.metodos.variableAleatoriaExponencial(this.mediaExponencial, this.numerosAleatorios.get(this.posicionNumeroAleatorio));
-
-            Cliente a = new Cliente(i, tiempoEnColaCliente, tiempoEnColaCliente);
-
-            this.cola1.clientesEnCola.add(a);
-
-            this.posicionNumeroAleatorio++;
-
-        }
     }
 
     //metodo que simula la operacion del sistema con colas que se atienden simultaneamente
     public void simular() {
+
+        int clientesPorAgregar = numeroClientesEnCola1();
+
+        int cola1Size = clientesPorAgregar;
+        int cola2Size = 0;
+
+        int clientesAtendidosCola1 = 0;
+        int clientesAtendidosCola2 = 0;
+
+        //agregamos el primer cliente a la cola, en el tiempo 0
+        agregaClientesEnCola1();
+        clientesPorAgregar--;
 
         int clientesEnCola1 = this.cola1.clientesEnCola.size();
         int clientesEnCola2 = 0;
@@ -81,23 +91,28 @@ public class Simulacion {
         int aux1 = clientesEnCola1;
         int aux2 = 0;
 
-        int clientesAtendidosCola1 = 0;
-        int clientesAtendidosCola2 = 0;
-
-        int cola1Size = this.cola1.clientesEnCola.size();
-        int cola2Size = 0;
-
         //se corre la simulacion en el tiempo que establecio el usuario
         for (double i = 0; i <= this.tiempoSimulacion; i += 0.01) {
 
-            //validamos que todos los clientes de la cola hayan sido atendidos, si es asi, creamos nuevos clientes
-            if (clientesAtendidosCola1 == cola1Size) {
+            //Se agrega el numero de clientes que llegaran a la cola 1 cada hora
+            if ((metodos.redondear(i, 2) % 60) == 0.00) {
+                clientesPorAgregar += numeroClientesEnCola1();
+            }
 
-                asignaClientesEnCola1();
-                clientesEnCola1 = clientesEnCola1 + this.cola1.clientesEnCola.size() - cola1Size;
-                cola1Size = this.cola1.clientesEnCola.size();
+            //Tenemos una razon de llegada de clientes de 1 cliente cada 3 minutos
+            //cada 3 minutos añadimos 1 cliente a la cola
+            if ((metodos.redondear(i, 2) % 3) == 0.00) {
 
-            } else {
+                //validamos que podamos agregar clientes segun el numero aleatorio obtenido
+                if (clientesPorAgregar > 0) {
+                    agregaClientesEnCola1();
+                    clientesEnCola1++;
+                    clientesPorAgregar--;
+                }
+            }
+
+            //validamos que hayan clientes en cola esperando, si no hay clientes en cola, se hace nada
+            if (clientesEnCola1 > 0) {
 
                 //validamos que el cliente tenga tiempo de atencion todavia
                 if (this.cola1.clientesEnCola.get(clientesAtendidosCola1).tiempoEnCola > 0) {
@@ -125,8 +140,10 @@ public class Simulacion {
                         //se aumenta el numero de clientes atendidos
                         clientesAtendidosCola1++;
 
+                        //disminuimos el numero de clientes en la cola
                         clientesEnCola1--;
 
+                        //aumentamos el numero de clientes en la cola 2
                         clientesEnCola2++;
 
                         this.cola1.numeroClientesEnCola = clientesAtendidosCola1;
@@ -136,6 +153,7 @@ public class Simulacion {
                     } else {
                     }
                 }
+
             }
 
             //se valida que almenos se haya atendido un cliente en la cola 1
@@ -160,6 +178,7 @@ public class Simulacion {
                             //se aumenta el contador de clientes atendidos
                             clientesAtendidosCola2++;
 
+                            //disminuimos el numero de clientes en la cola 2
                             clientesEnCola2--;
 
                             this.cola2.numeroClientesEnCola = clientesAtendidosCola2;
@@ -173,29 +192,76 @@ public class Simulacion {
 
             }
 
+            //Mostramos el numero de clientes en cola y atendidos de ambas colas cada vez que un cliente llega, pasa a otra cola o se va
             if (aux1 != clientesEnCola1 || aux2 != clientesEnCola2) {
-                System.out.println("Clientes en cola 1 y 2: " + clientesEnCola1 + " " + clientesEnCola2);
+                System.out.println("Clientes en cola y atendidos: cola 1 y 2: " + +clientesEnCola1 + " " + clientesAtendidosCola1 + " " + clientesEnCola2 + " " + clientesAtendidosCola2);
                 aux1 = clientesEnCola1;
                 aux2 = clientesEnCola2;
             }
 
+            //Guardamos los numeros de clientes en las colas cuando son mayores a los anteriores
+            if (clientesEnCola1 > numeroMayorCola1) {
+                numeroMayorCola1 = clientesEnCola1;
+            }
+
+            if (clientesEnCola2 > numeroMayorCola2) {
+                numeroMayorCola2 = clientesEnCola2;
+            }
+
         }
+
     }
 
     //metodo para realizar los calculos solicitados por el problema
-    public void calculos() {
+    public double promedioTiempoEnSistema() {
 
         double promedioTiempoEnSistema = 0;
 
         for (int i = 0; i < cola2.clientesEnCola.size(); i++) {
-
             promedioTiempoEnSistema += cola2.clientesEnCola.get(i).tiempoTotalEnCola;
-
         }
+        return metodos.redondear(promedioTiempoEnSistema /= cola2.numeroClientesEnCola, 2);
+        
+    }
 
-        promedioTiempoEnSistema = metodos.redondear(promedioTiempoEnSistema /= cola2.numeroClientesEnCola);
+    public void limpiar() {
+        
+        cola1.clientesEnCola.clear();
+        cola2.clientesEnCola.clear();
+        
+        cola1.numeroClientesEnCola = 0;
+        cola2.numeroClientesEnCola = 0;
 
-        System.out.println(promedioTiempoEnSistema + " " + cola1.numeroClientesEnCola + " " + cola2.numeroClientesEnCola);
+        numeroMayorCola1 = 0;
+        numeroMayorCola2 = 0;
 
     }
+    
+    public void corridas() {
+
+        double promedioTiempoEnSistema = 0; 
+        int numeroCola1 = 0;
+        int numeroCola2 = 0;
+        
+        for (int i = 0; i < numeroCorridas; i++) {
+            
+            System.out.println("Corrida " + i);
+            simular();
+            promedioTiempoEnSistema += promedioTiempoEnSistema();
+            numeroCola1 += numeroMayorCola1;
+            numeroCola2 += numeroMayorCola2;
+            
+            limpiar();
+            
+        }
+        
+        promedioTiempoEnSistema = metodos.redondear(promedioTiempoEnSistema/numeroCorridas, 2);
+        numeroCola1 /= numeroCorridas;
+        numeroCola2 /= numeroCorridas;
+
+        System.out.println("\nPromedio de tiempo de los clientes en el sistema: " + promedioTiempoEnSistema + " Minutos"
+                + "\nNumero Mayor de clientes en cola 1: " + numeroCola1 + " clientes"
+                + "\nNumero Mayor de clientes en cola 2: " + numeroCola2 + " clientes");
+    }
+    
 }

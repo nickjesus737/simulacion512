@@ -69,7 +69,7 @@ public class Metodos {
             variableAleatoria = (-(1 / lambda) * Math.log(numeroAleatorio));
         }
         
-        return redondear(variableAleatoria);
+        return redondear(variableAleatoria, 2);
 
     }
 
@@ -78,7 +78,7 @@ public class Metodos {
 
         double variableAleatoria = rangoA + (rangoB - rangoA) * numeroAleatorio;
 
-        return redondear(variableAleatoria);
+        return redondear(variableAleatoria, 2);
 
     }
 
@@ -122,9 +122,9 @@ public class Metodos {
     }
     
     //metodo para redondear numeros double a dos decimales
-    public double redondear (double decimal){
+    public double redondear (double decimal, int escala){
         
-        BigDecimal bd = new BigDecimal(decimal).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal bd = new BigDecimal(decimal).setScale(escala, RoundingMode.HALF_UP);
 
         return Double.parseDouble(bd.toString());
     }
