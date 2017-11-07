@@ -8,7 +8,8 @@ public class Metodos {
 
     public Metodos() {
     }
-
+    
+    //generador de numeros aleatorios con el metodo congruencial mixto
     public ArrayList numerosAleatorios(int x, int a, int c, int m) {
 
         ArrayList<Double> numerosAleatorios = new ArrayList<>();
@@ -32,6 +33,7 @@ public class Metodos {
         return numerosAleatorios;
     }
 
+    //generador de variables aleatorias con el metodo de poisson
     public int variableAleatoriaPoisson(ArrayList lista, double numeroAleatorio) {
 
         double rango1 = 0;
@@ -54,6 +56,7 @@ public class Metodos {
         return variableAleatoria;
     }
 
+    //generador de variables aleatorias con el metodo exponencial
     public double variableAleatoriaExponencial(double media, double numeroAleatorio) {
 
         double lambda = 1 / media;
@@ -70,6 +73,7 @@ public class Metodos {
 
     }
 
+    //generador de variables aleatorias uniformemente distribuidas
     public double variableAleatoriaUniforme(double rangoA, double rangoB, double numeroAleatorio) {
 
         double variableAleatoria = rangoA + (rangoB - rangoA) * numeroAleatorio;
@@ -78,6 +82,7 @@ public class Metodos {
 
     }
 
+    //metodo para calcular el factorial de un numero
     public float factorial(float x) {
 
         float factorial = 1;
@@ -90,6 +95,7 @@ public class Metodos {
         return factorial;
     }
 
+    //metodo para generar la lista de numeros que siguen una distribucion de poisson
     public ArrayList listaPoisson(double lambda) {
 
         ArrayList<Double> listaPoisson = new ArrayList<>();
@@ -115,9 +121,9 @@ public class Metodos {
         return listaPoisson;
     }
     
+    //metodo para redondear numeros double a dos decimales
     public double redondear (double decimal){
         
-        //para redondear a dos decimales 
         BigDecimal bd = new BigDecimal(decimal).setScale(2, RoundingMode.HALF_UP);
 
         return Double.parseDouble(bd.toString());
