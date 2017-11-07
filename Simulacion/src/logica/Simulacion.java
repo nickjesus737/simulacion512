@@ -79,6 +79,7 @@ public class Simulacion {
         int clientesEnCola2 = 0;
 
         int aux1 = clientesEnCola1;
+        int aux2 = 0;
 
         int clientesAtendidosCola1 = 0;
         int clientesAtendidosCola2 = 0;
@@ -172,9 +173,10 @@ public class Simulacion {
 
             }
 
-            if (aux1 != clientesEnCola1) {
+            if (aux1 != clientesEnCola1 || aux2 != clientesEnCola2) {
                 System.out.println("Clientes en cola 1 y 2: " + clientesEnCola1 + " " + clientesEnCola2);
                 aux1 = clientesEnCola1;
+                aux2 = clientesEnCola2;
             }
 
         }
