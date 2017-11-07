@@ -200,7 +200,6 @@ public class Simulacion {
                 aux2 = clientesEnCola2;
             }
              */
-            
             //Guardamos los numeros de clientes en las colas cuando son mayores a los anteriores
             if (clientesEnCola1 > numeroMayorCola1) {
                 numeroMayorCola1 = clientesEnCola1;
@@ -239,37 +238,50 @@ public class Simulacion {
 
     }
 
-    public void corridas() {
+    public void correrSimulacion() {
 
         double promedioTiempoEnSistema = 0;
-        int numeroCola1 = 0;
-        int numeroCola2 = 0;
+        double numeroCola1 = 0;
+        double numeroCola2 = 0;
+        double iguales = 0;
 
-        for (int i = 0; i < numeroCorridas; i++) {
+        for (int i = 1; i < numeroCorridas + 1; i++) {
 
             System.out.println("\nCorrida " + i);
             simular();
-            
+
             System.out.println("Promedio de tiempo en sistema: " + promedioTiempoEnSistema() + " Minutos");
             promedioTiempoEnSistema += promedioTiempoEnSistema();
-            
-            System.out.println("Numero Mayor de clientes en cola 1: " + numeroMayorCola1 + " clientes");
-            numeroCola1 += numeroMayorCola1;
-            
-             System.out.println("Numero Mayor de clientes en cola 2: " + numeroMayorCola2 + " clientes");
-            numeroCola2 += numeroMayorCola2;
 
+            System.out.println("Numero Maximo de clientes esperando en cola 1: " + numeroMayorCola1 + " clientes");
+
+            System.out.println("Numero Maximo de clientes esperando en cola 2: " + numeroMayorCola2 + " clientes");
+
+            if (numeroMayorCola1 > numeroMayorCola2) {
+                numeroCola1++;
+            } else {
+                if (numeroMayorCola2 > numeroMayorCola1) {
+                    numeroCola2++;
+                } else {
+                    if (numeroMayorCola1 == numeroMayorCola2) {
+                        iguales++;
+                    }
+                }
+            }
+            
             limpiar();
-
         }
 
         promedioTiempoEnSistema = metodos.redondear(promedioTiempoEnSistema / numeroCorridas, 2);
-        numeroCola1 /= numeroCorridas;
-        numeroCola2 /= numeroCorridas;
+        numeroCola1= metodos.redondear((numeroCola1 / numeroCorridas) * 100, 2);
+        numeroCola2 =  metodos.redondear((numeroCola2 / numeroCorridas) * 100, 2);
+        iguales =  metodos.redondear((iguales / numeroCorridas) * 100, 2);
 
-        System.out.println("\nPromedio de tiempo de los clientes en el sistema: " + promedioTiempoEnSistema + " Minutos"
-                + "\nNumero Mayor de clientes en cola 1: " + numeroCola1 + " clientes"
-                + "\nNumero Mayor de clientes en cola 2: " + numeroCola2 + " clientes");
+        System.out.println("\nConclusiones Generales");
+        System.out.println("Promedio general de tiempo de los clientes en el sistema: " + promedioTiempoEnSistema + " Minutos"
+                + "\nProbabilidad de tener mas clientes esperando en cola 1: " + numeroCola1 + "%"
+                + "\nProbabilidad de tener mas clientes esperando en cola 2: " + numeroCola2 + "%"
+                + "\nProbabilidad de tener igual numero de clientes en ambias colas: " + iguales + "%");
     }
 
 }
