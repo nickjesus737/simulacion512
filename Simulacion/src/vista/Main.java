@@ -1,0 +1,22 @@
+package vista;
+
+import java.util.ArrayList;
+import logica.Metodos;
+import logica.Simulacion;
+
+
+public class Main {
+
+    public static void main(String arg[]) {
+
+        Simulacion simulacion = new Simulacion(1, 2, 5, 127, 11, 2003, 20, 2, 1, 2);
+        
+        Metodos me = new Metodos();
+        
+        ArrayList <Double> a = me.numerosAleatorios(5, 127, 11, 2003);
+        
+        System.out.println(a.size());
+        
+    }
+
+}
