@@ -268,20 +268,21 @@ public class Simulacion {
                     }
                 }
             }
-            
+
             limpiar();
         }
 
         promedioTiempoEnSistema = metodos.redondear(promedioTiempoEnSistema / numeroCorridas, 2);
-        numeroCola1= metodos.redondear((numeroCola1 / numeroCorridas) * 100, 2);
-        numeroCola2 =  metodos.redondear((numeroCola2 / numeroCorridas) * 100, 2);
-        iguales =  metodos.redondear((iguales / numeroCorridas) * 100, 2);
+
+        numeroCola1 = metodos.redondear((numeroCola1 / numeroCorridas) * 100, 2);
+        numeroCola2 = metodos.redondear((numeroCola2 / numeroCorridas) * 100, 2);
+        iguales = metodos.redondear((iguales / numeroCorridas) * 100, 2);
 
         System.out.println("\nConclusiones Generales");
         System.out.println("Promedio general de tiempo de los clientes en el sistema: " + promedioTiempoEnSistema + " Minutos"
                 + "\nProbabilidad de tener mas clientes esperando en cola 1: " + numeroCola1 + "%"
                 + "\nProbabilidad de tener mas clientes esperando en cola 2: " + numeroCola2 + "%"
-                + "\nProbabilidad de tener igual numero de clientes en ambias colas: " + iguales + "%");
+                + "\nProbabilidad de tener igual numero de clientes en ambas colas: " + iguales + "%");
     }
 
 }
