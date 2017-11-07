@@ -192,13 +192,15 @@ public class Simulacion {
 
             }
 
+            /*
             //Mostramos el numero de clientes en cola y atendidos de ambas colas cada vez que un cliente llega, pasa a otra cola o se va
             if (aux1 != clientesEnCola1 || aux2 != clientesEnCola2) {
                 System.out.println("Clientes en cola y atendidos: cola 1 y 2: " + +clientesEnCola1 + " " + clientesAtendidosCola1 + " " + clientesEnCola2 + " " + clientesAtendidosCola2);
                 aux1 = clientesEnCola1;
                 aux2 = clientesEnCola2;
             }
-
+             */
+            
             //Guardamos los numeros de clientes en las colas cuando son mayores a los anteriores
             if (clientesEnCola1 > numeroMayorCola1) {
                 numeroMayorCola1 = clientesEnCola1;
@@ -221,14 +223,14 @@ public class Simulacion {
             promedioTiempoEnSistema += cola2.clientesEnCola.get(i).tiempoTotalEnCola;
         }
         return metodos.redondear(promedioTiempoEnSistema /= cola2.numeroClientesEnCola, 2);
-        
+
     }
 
     public void limpiar() {
-        
+
         cola1.clientesEnCola.clear();
         cola2.clientesEnCola.clear();
-        
+
         cola1.numeroClientesEnCola = 0;
         cola2.numeroClientesEnCola = 0;
 
@@ -236,26 +238,32 @@ public class Simulacion {
         numeroMayorCola2 = 0;
 
     }
-    
+
     public void corridas() {
 
-        double promedioTiempoEnSistema = 0; 
+        double promedioTiempoEnSistema = 0;
         int numeroCola1 = 0;
         int numeroCola2 = 0;
-        
+
         for (int i = 0; i < numeroCorridas; i++) {
-            
-            System.out.println("Corrida " + i);
+
+            System.out.println("\nCorrida " + i);
             simular();
+            
+            System.out.println("Promedio de tiempo en sistema: " + promedioTiempoEnSistema() + " Minutos");
             promedioTiempoEnSistema += promedioTiempoEnSistema();
+            
+            System.out.println("Numero Mayor de clientes en cola 1: " + numeroMayorCola1 + " clientes");
             numeroCola1 += numeroMayorCola1;
+            
+             System.out.println("Numero Mayor de clientes en cola 2: " + numeroMayorCola2 + " clientes");
             numeroCola2 += numeroMayorCola2;
-            
+
             limpiar();
-            
+
         }
-        
-        promedioTiempoEnSistema = metodos.redondear(promedioTiempoEnSistema/numeroCorridas, 2);
+
+        promedioTiempoEnSistema = metodos.redondear(promedioTiempoEnSistema / numeroCorridas, 2);
         numeroCola1 /= numeroCorridas;
         numeroCola2 /= numeroCorridas;
 
@@ -263,5 +271,5 @@ public class Simulacion {
                 + "\nNumero Mayor de clientes en cola 1: " + numeroCola1 + " clientes"
                 + "\nNumero Mayor de clientes en cola 2: " + numeroCola2 + " clientes");
     }
-    
+
 }
