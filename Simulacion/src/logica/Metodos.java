@@ -65,13 +65,8 @@ public class Metodos {
         } else {
             variableAleatoria = (-(1 / lambda) * Math.log(numeroAleatorio));
         }
-
-        //para redondear a dos decimales 
-        BigDecimal bd = new BigDecimal(variableAleatoria).setScale(2, RoundingMode.HALF_UP);
-
-        variableAleatoria = Double.parseDouble(bd.toString());
-
-        return variableAleatoria;
+        
+        return redondear(variableAleatoria);
 
     }
 
@@ -79,12 +74,7 @@ public class Metodos {
 
         double variableAleatoria = rangoA + (rangoB - rangoA) * numeroAleatorio;
 
-        //para redondear a dos decimales 
-        BigDecimal bd = new BigDecimal(variableAleatoria).setScale(2, RoundingMode.HALF_UP);
-
-        variableAleatoria = Double.parseDouble(bd.toString());
-
-        return variableAleatoria;
+        return redondear(variableAleatoria);
 
     }
 
@@ -123,5 +113,13 @@ public class Metodos {
         }
 
         return listaPoisson;
+    }
+    
+    public double redondear (double decimal){
+        
+        //para redondear a dos decimales 
+        BigDecimal bd = new BigDecimal(decimal).setScale(2, RoundingMode.HALF_UP);
+
+        return Double.parseDouble(bd.toString());
     }
 }

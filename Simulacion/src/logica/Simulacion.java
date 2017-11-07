@@ -157,7 +157,7 @@ public class Simulacion {
 
         }
         
-        promedioTiempoEnSistema /= cola2.numeroClientesEnCola;
+        promedioTiempoEnSistema = metodos.redondear(promedioTiempoEnSistema /= cola2.numeroClientesEnCola);
 
         System.out.println(promedioTiempoEnSistema + " " + cola1.numeroClientesEnCola + " " + cola2.numeroClientesEnCola);
 
