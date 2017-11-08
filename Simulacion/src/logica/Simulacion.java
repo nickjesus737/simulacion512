@@ -101,7 +101,7 @@ public class Simulacion {
 
             //Tenemos una razon de llegada de clientes de 1 cliente cada 3 minutos
             //cada 3 minutos añadimos 1 cliente a la cola
-            if ((metodos.redondear(i, 2) % 3) == 0.00) {
+            if ((metodos.redondear(i, 2) % (clientesPorAgregar/60)) == 0.00) {
 
                 //validamos que podamos agregar clientes segun el numero aleatorio obtenido
                 if (clientesPorAgregar > 0) {
