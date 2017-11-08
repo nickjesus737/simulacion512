@@ -101,17 +101,17 @@ public class Simulacion {
 
         int aux1 = clientesEnCola1;
         int aux2 = 0;
-        
-        double tiempoAgregar = clientesPorAgregar/60.0;
-        
+
+        double tiempoAgregar = 60.0 / clientesPorAgregar;
 
         //se corre la simulacion en el tiempo que establecio el usuario
         for (double i = 0; i <= this.tiempoSimulacion; i += 0.01) {
 
             //Se agrega el numero de clientes que llegaran a la cola 1 cada hora
             if ((metodos.redondear(i, 2) % 60) == 0.00) {
-                clientesPorAgregar += numeroClientesEnCola1();
-                tiempoAgregar = clientesPorAgregar/60.0;
+                int nuevosClientes = numeroClientesEnCola1();
+                clientesPorAgregar += nuevosClientes;
+                tiempoAgregar = 60.0 / nuevosClientes;
             }
 
             //Tenemos una razon de llegada de clientes de 1 cliente cada 3 minutos
@@ -186,7 +186,7 @@ public class Simulacion {
                     if (this.cola2.clientesEnCola.get(clientesAtendidosCola2).tiempoEnCola > 0) {
 
                         this.cola2.clientesEnCola.get(clientesAtendidosCola2).tiempoEnCola -= 0.01;
-                        
+
                         aumentaTiempoEnSistema(clientesAtendidosCola1, clientesAtendidosCola2);
 
                     } else {
@@ -317,15 +317,10 @@ public class Simulacion {
         System.out.println("\nConclusiones Generales");
         System.out.println("Promedio general de tiempo de los clientes siendo atendidos: " + promedioTiempoEnAtencion + " Minutos"
                 + "\nPromedio general de tiempo de los clientes en el sistema: " + promedioTiempoEnSistema + " Minutos"
-                + "\nProbabilidad de tener mas clientes esperando en cola 1: " + numeroCola1 + "%"
-                + "\nProbabilidad de tener mas clientes esperando en cola 2: " + numeroCola2 + "%"
-                + "\nProbabilidad de tener igual numero de clientes en ambas colas: " + iguales + "%");
-        
-        if (numeroCola1 > numeroCola2){
-            System.out.println("\nHay un " + numeroCola1 + "% de probabilidad de que la cola 1 sea mas larga que la cola 2.");
-        }else{
-            System.out.println("\nHay un " + numeroCola2 + "% de probabilidad de que la cola 2 sea mas larga que la cola 1.");
-        }
+                + "\nHay un " + numeroCola1 +"% de probabilidad de tener mas clientes esperando en cola 1, "
+                + numeroCola2 + "% de probabilidad de tener mas clientes esperando en cola 2 y \n"
+                + iguales + "% de probabilidad de tener igual numero de clientes en ambas colas");
+
     }
 
 }
