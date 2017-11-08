@@ -101,6 +101,9 @@ public class Simulacion {
 
         int aux1 = clientesEnCola1;
         int aux2 = 0;
+        
+        double tiempoAgregar = clientesPorAgregar/60.0;
+        
 
         //se corre la simulacion en el tiempo que establecio el usuario
         for (double i = 0; i <= this.tiempoSimulacion; i += 0.01) {
@@ -108,11 +111,12 @@ public class Simulacion {
             //Se agrega el numero de clientes que llegaran a la cola 1 cada hora
             if ((metodos.redondear(i, 2) % 60) == 0.00) {
                 clientesPorAgregar += numeroClientesEnCola1();
+                tiempoAgregar = clientesPorAgregar/60.0;
             }
 
             //Tenemos una razon de llegada de clientes de 1 cliente cada 3 minutos
             //cada 3 minutos añadimos 1 cliente a la cola
-            if ((metodos.redondear(i, 2) % 3) == 0.00) {
+            if ((metodos.redondear(i, 2) % tiempoAgregar) == 0.00) {
 
                 //validamos que podamos agregar clientes segun el numero aleatorio obtenido
                 if (clientesPorAgregar > 0) {
