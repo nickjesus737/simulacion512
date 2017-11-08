@@ -62,12 +62,23 @@ public class Simulacion {
 
         tiempoEnColaCliente = this.metodos.variableAleatoriaExponencial(this.mediaExponencial, this.numerosAleatorios.get(this.posicionNumeroAleatorio));
 
-        Cliente a = new Cliente(tiempoEnColaCliente, tiempoEnColaCliente);
+        Cliente a = new Cliente(tiempoEnColaCliente, tiempoEnColaCliente, 0);
 
         this.cola1.clientesEnCola.add(a);
 
         this.posicionNumeroAleatorio++;
 
+    }
+
+    public void aumentaTiempoEnSistema(int posicionCola1, int posicionCola2) {
+
+        for (int i = posicionCola1; i < this.cola1.clientesEnCola.size(); i++) {
+            this.cola1.clientesEnCola.get(i).tiempoEnElSistema += 0.01;
+        }
+
+        for (int i = posicionCola2; i < this.cola2.clientesEnCola.size(); i++) {
+            this.cola2.clientesEnCola.get(i).tiempoEnElSistema += 0.01;
+        }
     }
 
     //metodo que simula la operacion del sistema con colas que se atienden simultaneamente
@@ -101,7 +112,7 @@ public class Simulacion {
 
             //Tenemos una razon de llegada de clientes de 1 cliente cada 3 minutos
             //cada 3 minutos añadimos 1 cliente a la cola
-            if ((metodos.redondear(i, 2) % (clientesPorAgregar/60)) == 0.00) {
+            if ((metodos.redondear(i, 2) % 3) == 0.00) {
 
                 //validamos que podamos agregar clientes segun el numero aleatorio obtenido
                 if (clientesPorAgregar > 0) {
@@ -120,6 +131,8 @@ public class Simulacion {
                     //si tiene tiempo de atencion, se le reduce hasta que llegue a cero
                     this.cola1.clientesEnCola.get(clientesAtendidosCola1).tiempoEnCola -= 0.01;
 
+                    aumentaTiempoEnSistema(clientesAtendidosCola1, clientesAtendidosCola2);
+
                 } else {
 
                     //si el tiempo de atencion del cliente llega a cero
@@ -132,7 +145,7 @@ public class Simulacion {
                         this.cola1.clientesEnCola.get(clientesAtendidosCola1).tiempoEnCola = nuevoTiempoCliente;
 
                         //se suma el tiempo total en el sistema del cliente
-                        this.cola1.clientesEnCola.get(clientesAtendidosCola1).tiempoTotalEnCola += nuevoTiempoCliente;
+                        this.cola1.clientesEnCola.get(clientesAtendidosCola1).tiempoTotalAtencion += nuevoTiempoCliente;
 
                         //se pasa el cliente a la siguiente cola
                         this.cola2.clientesEnCola.add(this.cola1.clientesEnCola.get(clientesAtendidosCola1));
@@ -169,6 +182,8 @@ public class Simulacion {
                     if (this.cola2.clientesEnCola.get(clientesAtendidosCola2).tiempoEnCola > 0) {
 
                         this.cola2.clientesEnCola.get(clientesAtendidosCola2).tiempoEnCola -= 0.01;
+                        
+                        aumentaTiempoEnSistema(clientesAtendidosCola1, clientesAtendidosCola2);
 
                     } else {
 
@@ -213,13 +228,25 @@ public class Simulacion {
 
     }
 
+    //metodo para calcular el tiempo promedio que el usuario es atendido
+    public double promedioTiempoEnAtencion() {
+
+        double promedioTiempoEnAtencion = 0;
+
+        for (int i = 0; i < cola2.clientesEnCola.size(); i++) {
+            promedioTiempoEnAtencion += cola2.clientesEnCola.get(i).tiempoTotalAtencion;
+        }
+        return metodos.redondear(promedioTiempoEnAtencion /= cola2.numeroClientesEnCola, 2);
+
+    }
+
     //metodo para realizar los calculos solicitados por el problema
     public double promedioTiempoEnSistema() {
 
         double promedioTiempoEnSistema = 0;
 
         for (int i = 0; i < cola2.clientesEnCola.size(); i++) {
-            promedioTiempoEnSistema += cola2.clientesEnCola.get(i).tiempoTotalEnCola;
+            promedioTiempoEnSistema += cola2.clientesEnCola.get(i).tiempoEnElSistema;
         }
         return metodos.redondear(promedioTiempoEnSistema /= cola2.numeroClientesEnCola, 2);
 
@@ -240,6 +267,7 @@ public class Simulacion {
 
     public void correrSimulacion() {
 
+        double promedioTiempoEnAtencion = 0;
         double promedioTiempoEnSistema = 0;
         double numeroCola1 = 0;
         double numeroCola2 = 0;
@@ -250,7 +278,10 @@ public class Simulacion {
             System.out.println("\nCorrida " + i);
             simular();
 
-            System.out.println("Promedio de tiempo en sistema: " + promedioTiempoEnSistema() + " Minutos");
+            System.out.println("Promedio de tiempo en Atencion: " + promedioTiempoEnAtencion() + " Minutos");
+            promedioTiempoEnAtencion += promedioTiempoEnAtencion();
+
+            System.out.println("Promedio de tiempo en el sistema: " + promedioTiempoEnSistema() + " Minutos");
             promedioTiempoEnSistema += promedioTiempoEnSistema();
 
             System.out.println("Numero Maximo de clientes esperando en cola 1: " + numeroMayorCola1 + " clientes");
@@ -273,13 +304,15 @@ public class Simulacion {
         }
 
         promedioTiempoEnSistema = metodos.redondear(promedioTiempoEnSistema / numeroCorridas, 2);
+        promedioTiempoEnAtencion = metodos.redondear(promedioTiempoEnAtencion / numeroCorridas, 2);
 
         numeroCola1 = metodos.redondear((numeroCola1 / numeroCorridas) * 100, 2);
         numeroCola2 = metodos.redondear((numeroCola2 / numeroCorridas) * 100, 2);
         iguales = metodos.redondear((iguales / numeroCorridas) * 100, 2);
 
         System.out.println("\nConclusiones Generales");
-        System.out.println("Promedio general de tiempo de los clientes en el sistema: " + promedioTiempoEnSistema + " Minutos"
+        System.out.println("Promedio general de tiempo de los clientes siendo atendidos: " + promedioTiempoEnAtencion + " Minutos"
+                + "\nPromedio general de tiempo de los clientes en el sistema: " + promedioTiempoEnSistema + " Minutos"
                 + "\nProbabilidad de tener mas clientes esperando en cola 1: " + numeroCola1 + "%"
                 + "\nProbabilidad de tener mas clientes esperando en cola 2: " + numeroCola2 + "%"
                 + "\nProbabilidad de tener igual numero de clientes en ambas colas: " + iguales + "%");
