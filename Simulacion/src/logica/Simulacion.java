@@ -313,15 +313,10 @@ public class Simulacion {
         System.out.println("\nConclusiones Generales");
         System.out.println("Promedio general de tiempo de los clientes siendo atendidos: " + promedioTiempoEnAtencion + " Minutos"
                 + "\nPromedio general de tiempo de los clientes en el sistema: " + promedioTiempoEnSistema + " Minutos"
-                + "\nProbabilidad de tener mas clientes esperando en cola 1: " + numeroCola1 + "%"
-                + "\nProbabilidad de tener mas clientes esperando en cola 2: " + numeroCola2 + "%"
-                + "\nProbabilidad de tener igual numero de clientes en ambas colas: " + iguales + "%");
-        
-        if (numeroCola1 > numeroCola2){
-            System.out.println("\nHay un " + numeroCola1 + "% de probabilidad de que la cola 1 sea mas larga que la cola 2.");
-        }else{
-            System.out.println("\nHay un " + numeroCola2 + "% de probabilidad de que la cola 2 sea mas larga que la cola 1.");
-        }
+                + "\nHay un " + numeroCola1 +"% de probabilidad de tener mas clientes esperando en cola 1, "
+                + numeroCola2 + "% de probabilidad de tener mas clientes esperando en cola 2 y \n"
+                + iguales + "% de probabilidad de tener igual numero de clientes en ambas colas");
+
     }
 
 }
